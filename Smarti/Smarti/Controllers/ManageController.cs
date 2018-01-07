@@ -225,6 +225,8 @@ namespace Smarti.Controllers
             return RedirectToAction(nameof(SetPassword));
         }
 
+        #region NotUsedForNow
+
         [HttpGet]
         public async Task<IActionResult> ExternalLogins()
         {
@@ -463,6 +465,8 @@ namespace Smarti.Controllers
 
             return View(model);
         }
+
+        #endregion
 
         #region Helpers
 
