@@ -70,13 +70,16 @@ namespace Smarti
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
+            // Add Database Initializer
+            services.AddScoped<IDbInitializer, DbInitializer>();
+
             services.AddMvc();
 
             services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -92,6 +95,8 @@ namespace Smarti
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            dbInitializer.Initialize();
 
             app.UseMvc(routes =>
             {

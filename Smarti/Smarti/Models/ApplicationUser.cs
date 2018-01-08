@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Smarti.Models
 {
-    // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        //For now lazy loading is not supported (it will from 2.1v), but virtual can be added
+        public virtual ICollection<Room> Rooms { get; set; }
     }
 }
