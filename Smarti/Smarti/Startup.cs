@@ -69,6 +69,9 @@ namespace Smarti
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IRoomRepository, RoomRepository>();
+            services.AddTransient<ISocketRepository, SocketRepository>();
+            services.AddTransient<ISocketDataRepository, SocketDataRepository>();
 
             // Add Database Initializer
             services.AddScoped<IDbInitializer, DbInitializer>();
