@@ -1,0 +1,20 @@
+﻿@model Smarti.Models.Room
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Are you sure you want to delete <strong>@Model.Name</strong>?</h2>
+<hr />
+<div class="alert alert-danger">
+    <strong>Danger!</strong> This action will delete all sockets connected with this room, and all data connected to this sockets.
+</div>
+    
+<form asp-action="Delete">
+    <input type="hidden" asp-for="RoomId" />
+    <button type="submit" class="btn btn-danger">
+        <i class="fa fa-trash-o"></i> Delete
+    </button>
+    <a asp-controller="Socket" asp-action="Index" class="btn btn-primary"><i class="fa fa-undo"></i> Back</a>
+</form>
+

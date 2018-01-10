@@ -1,0 +1,13 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <ul class="nav navbar-nav">
+        <li>
+            <a asp-controller="Socket" asp-action="Index">Manage Devices</a>
+        </li>
+        <li>
+            <a asp-controller="Statistics" asp-action="Index">Statistics</a>
+        </li>
+    </ul>
+}

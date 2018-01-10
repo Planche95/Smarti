@@ -49,7 +49,7 @@ namespace Smarti.Services
 
         public void Savechanges()
         {
-            throw new NotImplementedException();
+            _applicationDbContext.SaveChanges();
         }
     }
 }

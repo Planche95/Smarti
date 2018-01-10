@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Room>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-primary btn-block" asp-controller="Room" asp-action="Create"><i class="fa fa-plus"></i> Add new room</a>
+        </div>
+        <hr />
+    </div>
+</div>
+
+@foreach (Room room in Model)
+{
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class='btn-toolbar pull-right'>
+                    <div class='btn-group'>
+                        <a class="btn btn-primary" asp-controller="Room" asp-action="Edit" asp-route-id="@room.RoomId"><i class="fa fa-pencil-square-o"></i> Edit</a>
+                        <a class="btn btn-danger" asp-controller="Room" asp-action="Delete" asp-route-id="@room.RoomId"><i class="fa fa-trash-o"></i> Delete</a>
+                        <a class="btn btn-success" asp-controller="Socket" asp-action="Create" asp-route-id="@room.RoomId"><i class="fa fa-plus"></i> Add socket</a>
+                    </div>
+                </div>
+                <h2>@room.Name</h2>
+            </div>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+
+        @foreach (Socket socket in room.Sockets)
+        {
+            @await Html.PartialAsync("_SocketBlockPartial", socket)
+        }
+
+    </div>
+}

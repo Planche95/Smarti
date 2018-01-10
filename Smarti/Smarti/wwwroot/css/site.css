@@ -1,5 +1,5 @@
 ﻿body {
-    padding-top: 50px;
+    padding-top: 60px;
     padding-bottom: 20px;
 }
 
@@ -32,4 +32,100 @@
     .carousel-caption {
         display: none;
     }
+}
+
+/*Toogle*/
+
+body {
+    font-family: 'Montserrat', 'Lato', 'Open Sans', 'Helvetica Neue', Helvetica, Calibri, Arial, sans-serif;
+    color: #6b7381;
+    background: #f2f2f2;
+}
+
+.jumbotron {
+    background: #6b7381;
+    color: #bdc1c8;
+}
+
+    .jumbotron h1 {
+        color: #fff;
+    }
+
+.btn-toggle:before,
+.btn-toggle:after {
+color: #6b7381;
+}
+
+.btn-toggle.active {
+background-color: #29b5a8;
+}
+
+.btn-toggle.btn-lg {
+margin: 0 5rem;
+padding: 0;
+position: relative;
+border: none;
+height: 2.5rem;
+width: 5rem;
+border-radius: 2.5rem;
+}
+
+.btn-toggle.btn-lg:focus,
+.btn-toggle.btn-lg.focus,
+.btn-toggle.btn-lg:focus.active,
+.btn-toggle.btn-lg.focus.active {
+    outline: none;
+}
+
+.btn-toggle.btn-lg:before,
+.btn-toggle.btn-lg:after {
+    line-height: 2.5rem;
+    width: 5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: absolute;
+    bottom: 0;
+    transition: opacity .25s;
+}
+
+.btn-toggle.btn-lg:before {
+    content: 'Off';
+    left: -5rem;
+}
+
+.btn-toggle.btn-lg:after {
+    content: 'On';
+    right: -5rem;
+    opacity: .5;
+}
+
+.btn-toggle.btn-lg > .handle {
+    position: absolute;
+    top: 0.3125rem;
+    left: 0.3125rem;
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: 1.875rem;
+    background: #fff;
+    transition: left .25s;
+}
+
+.btn-toggle.btn-lg.active {
+    transition: background-color 0.25s;
+}
+
+.btn-toggle.btn-lg.active > .handle {
+    left: 2.8125rem;
+    transition: left .25s;
+}
+
+.btn-toggle.btn-lg.active:before {
+    opacity: .5;
+}
+
+.btn-toggle.btn-lg.active:after {
+    opacity: 1;
 }

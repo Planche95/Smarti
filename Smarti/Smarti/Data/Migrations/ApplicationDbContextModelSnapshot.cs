@@ -184,15 +184,13 @@ namespace Smarti.Data.Migrations
                     b.Property<int>("RoomId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ApplicationUserId");
-
                     b.Property<string>("Name");
 
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
                     b.HasKey("RoomId");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Rooms");
                 });
@@ -282,7 +280,7 @@ namespace Smarti.Data.Migrations
                 {
                     b.HasOne("Smarti.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("Rooms")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Smarti.Models.Socket", b =>

@@ -76,9 +76,14 @@ namespace Smarti
             // Add Database Initializer
             services.AddScoped<IDbInitializer, DbInitializer>();
 
-            services.AddMvc();
-
+            //Register for secrets
             services.Configure<AuthMessageSenderOptions>(Configuration);
+
+            services.AddMvc()
+                .AddRazorOptions(options =>
+                {
+                    options.ViewLocationFormats.Add("/Views/Shared/PartialViews/{0}.cshtml");
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

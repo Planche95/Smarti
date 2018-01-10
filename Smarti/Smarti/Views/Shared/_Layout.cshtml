@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Smarti</title>
 
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+    @*<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">*@
+
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -29,11 +32,7 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Smarti</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
+                @await Html.PartialAsync("_NavMenuPartial")
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
@@ -45,7 +44,6 @@
             <p>&copy; 2018 - Smarti</p>
         </footer>
     </div>
-
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
@@ -66,6 +64,8 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
+
+    @*<script src="~/lib/bootstrap-toggle//js/bootstrap2-toggle.js"></script>*@
 
     @RenderSection("Scripts", required: false)
 </body>
