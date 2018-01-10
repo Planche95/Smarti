@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Smarti.Data;
 using Smarti.Models;
 using Smarti.Services;
+using AutoMapper;
 
 namespace Smarti
 {
@@ -23,7 +24,6 @@ namespace Smarti
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -78,6 +78,8 @@ namespace Smarti
 
             //Register for secrets
             services.Configure<AuthMessageSenderOptions>(Configuration);
+
+            services.AddAutoMapper();
 
             services.AddMvc()
                 .AddRazorOptions(options =>

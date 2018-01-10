@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace Smarti.Models.SocketsViewModels
 {
-    public class SocketViewModel
+    public class SocketDeleteViewModel
     {
         public int SocketId { get; set; }
         public string Name { get; set; }
-        public string DeviceId { get; set; }
-
-        public Room Room { get; set; }
     }
 }

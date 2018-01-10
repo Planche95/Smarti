@@ -7,6 +7,10 @@ using Smarti.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Smarti.Services;
+using Smarti.Models.SocketsViewModels;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Smarti.Models.RoomViewModels;
 
 namespace Smarti.Controllers
 {
@@ -15,35 +19,40 @@ namespace Smarti.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRoomRepository _roomRepository;
         private readonly ISocketRepository _socketRepository;
+        private readonly IMapper _mapper;
 
-        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository)
+        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, IMapper mapper)
         {
             _userManager = userManager;
             _roomRepository = roomRepository;
             _socketRepository = socketRepository;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
         {
-            return View
-                (
-                    _roomRepository.Rooms
+            IEnumerable<Room> rooms =_roomRepository.Rooms
                         .Include(r => r.ApplicationUser)
                         .Where(r => r.ApplicationUser.Id.Equals(_userManager.GetUserId(User)))
                         .Include(r => r.Sockets)
-                        .ToList()
-                );
+                        .ToList();
+
+            IEnumerable<RoomListViewModel> roomsViewModel = _mapper
+                .Map<IEnumerable<Room>, IEnumerable<RoomListViewModel>>(rooms);
+
+            return View(roomsViewModel);
         }
 
         public IActionResult Create(int id)
         {
-            return View(new Socket { RoomId = id });
+            return View(new SocketCreateViewModel { RoomId = id });
         }
 
         [HttpPost]
-        public IActionResult Create(Socket model)
+        public IActionResult Create(SocketCreateViewModel model)
         {
-            _socketRepository.CreateSocket(model);
+            Socket socket = _mapper.Map<Socket>(model);
+            _socketRepository.CreateSocket(socket);
             _socketRepository.Savechanges();
 
             return RedirectToAction("Index", "Socket");
@@ -51,13 +60,18 @@ namespace Smarti.Controllers
 
         public IActionResult Edit(int id)
         {
-            return View(_socketRepository.GetSocketById(id));
+            Socket socket = _socketRepository.GetSocketById(id);
+            SocketEditViewModel socketViewModel = _mapper.Map<SocketEditViewModel>(socket);
+            socketViewModel.Rooms = GetRoomsSelectList();
+
+            return View(socketViewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(Socket model)
+        public IActionResult Edit(SocketEditViewModel model)
         {
-            _socketRepository.EditSocket(model);
+            Socket socket = _mapper.Map<Socket>(model);
+            _socketRepository.EditSocket(socket);
             _socketRepository.Savechanges();
 
             return RedirectToAction("Index", "Socket");
@@ -65,16 +79,39 @@ namespace Smarti.Controllers
 
         public IActionResult Delete(int id)
         {
-            return View(_socketRepository.GetSocketById(id));
+            Socket socket = _socketRepository.GetSocketById(id);
+            SocketDeleteViewModel socketViewModel = _mapper.Map<SocketDeleteViewModel>(socket);
+
+            return View(socketViewModel);
         }
 
         [HttpPost]
-        public IActionResult Delete(Socket model)
+        public IActionResult Delete(SocketDeleteViewModel model)
         {
             _socketRepository.DeleteSocket(model.SocketId);
             _socketRepository.Savechanges();
 
             return RedirectToAction("Index", "Socket");
         }
+
+        #region Helpers
+
+        private List<SelectListItem> GetRoomsSelectList()
+        {
+            List<SelectListItem> rooms = new List<SelectListItem>();
+
+            foreach (Room room in _roomRepository.Rooms.ToList())
+            {
+                rooms.Add(new SelectListItem()
+                {
+                    Text = room.Name,
+                    Value = room.RoomId.ToString()
+                });
+            }
+
+            return rooms;
+        }
+
+        #endregion
     }
 }

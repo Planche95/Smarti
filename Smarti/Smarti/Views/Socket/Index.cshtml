@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Room>
+﻿@model IEnumerable<RoomListViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,7 +13,7 @@
     </div>
 </div>
 
-@foreach (Room room in Model)
+@foreach (RoomListViewModel room in Model)
 {
 
     <div class="container">
@@ -34,7 +34,7 @@
 
     <div class="row">
 
-        @foreach (Socket socket in room.Sockets)
+        @foreach (SocketListViewModel socket in room.Sockets)
         {
             @await Html.PartialAsync("_SocketBlockPartial", socket)
         }

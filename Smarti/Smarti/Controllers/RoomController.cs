@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Smarti.Models;
 using Smarti.Services;
 using Microsoft.AspNetCore.Identity;
+using AutoMapper;
+using Smarti.Models.RoomViewModels;
 
 namespace Smarti.Controllers
 {
@@ -13,23 +15,27 @@ namespace Smarti.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRoomRepository _roomRepository;
+        private readonly IMapper _mapper;
 
-        public RoomController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository)
+        public RoomController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, IMapper mapper)
         {
             _userManager = userManager;
             _roomRepository = roomRepository;
+            _mapper = mapper;
         }
 
         public IActionResult Create()
         {
-            return View();
+            return View(new RoomCreateViewModel());
         }
 
         [HttpPost]
-        public IActionResult Create(Room model)
+        public IActionResult Create(RoomCreateViewModel model)
         {
-            model.UserId = _userManager.GetUserId(User);
-            _roomRepository.CreateRoom(model);
+            Room room = _mapper.Map<Room>(model);
+            room.UserId = _userManager.GetUserId(User);
+
+            _roomRepository.CreateRoom(room);
             _roomRepository.Savechanges();
 
             return RedirectToAction("Index", "Socket");
@@ -37,13 +43,18 @@ namespace Smarti.Controllers
 
         public IActionResult Edit(int id)
         {
-            return View(_roomRepository.GetRoomById(id));
+            Room room = _roomRepository.GetRoomById(id);
+            RoomEditViewModel roomEditViewModel = _mapper.Map<RoomEditViewModel>(room);
+            
+            return View(roomEditViewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(Room model)
+        public IActionResult Edit(RoomEditViewModel model)
         {
-            _roomRepository.EditRoom(model);
+            Room room = _mapper.Map<Room>(model);
+
+            _roomRepository.EditRoom(room);
             _roomRepository.Savechanges();
 
             return RedirectToAction("Index", "Socket");
@@ -51,11 +62,14 @@ namespace Smarti.Controllers
 
         public IActionResult Delete(int id)
         {
-            return View(_roomRepository.GetRoomById(id));
+            Room room = _roomRepository.GetRoomById(id);
+            RoomDeleteViewModel roomDeleteViewModel = _mapper.Map<RoomDeleteViewModel>(room);
+
+            return View(roomDeleteViewModel);
         }
 
         [HttpPost]
-        public IActionResult Delete(Room model)
+        public IActionResult Delete(RoomDeleteViewModel model)
         {
             _roomRepository.DeleteRoom(model.RoomId);
             _roomRepository.Savechanges();

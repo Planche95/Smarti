@@ -1,4 +1,4 @@
-﻿@model Smarti.Models.Socket
+﻿@model SocketEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -24,7 +24,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="RoomId" class="control-label"></label>
-                <select asp-for="RoomId" class="form-control" asp-items="ViewBag.RoomId"></select>
+                <select asp-for="RoomId" class="form-control" asp-items="@Model.Rooms"></select>
                 <span asp-validation-for="RoomId" class="text-danger"></span>
             </div>
             <div class="form-group">
