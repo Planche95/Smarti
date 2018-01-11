@@ -23,5 +23,6 @@ namespace Smarti.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Socket> Sockets { get; set; }
         public DbSet<SocketData> SocketDatas { get; set; }
+        public DbSet<TimeTask> TimeTasks { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Smarti.Models;
 using Smarti.Models.RoomViewModels;
 using Smarti.Models.SocketsViewModels;
+using Smarti.Models.TimeTaskViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,11 @@ namespace Smarti.Profiles
             CreateMap<Room, RoomDeleteViewModel>();
             CreateMap<Room, RoomListViewModel>()
                 .ForMember(dest => dest.Sockets, source => source.MapFrom(nested => nested.Sockets));
+
+            CreateMap<TimeTask, TimeTaskCreateViewModel>().ReverseMap();
+            CreateMap<TimeTask, TimeTaskEditViewModel>().ReverseMap();
+            CreateMap<TimeTask, TimeTaskDeleteViewModel>();
+            CreateMap<TimeTask, TimeTaskListViewModel>();
         }
     }
 }

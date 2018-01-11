@@ -72,6 +72,7 @@ namespace Smarti
             services.AddTransient<IRoomRepository, RoomRepository>();
             services.AddTransient<ISocketRepository, SocketRepository>();
             services.AddTransient<ISocketDataRepository, SocketDataRepository>();
+            services.AddTransient<ITimeTaskRepository, TimeTaskRepository>();
 
             // Add Database Initializer
             services.AddScoped<IDbInitializer, DbInitializer>();

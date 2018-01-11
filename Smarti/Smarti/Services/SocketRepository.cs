@@ -1,4 +1,5 @@
-﻿using Smarti.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Smarti.Data;
 using Smarti.Models;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,11 @@ namespace Smarti.Services
 
         public Socket GetSocketById(int socketId)
         {
-            return _applicationDbContext.Sockets.FirstOrDefault(s => s.SocketId == socketId);
+            return _applicationDbContext.Sockets
+                .Where(s => s.SocketId == socketId)
+                .Include(s => s.Room)
+                .Include(s => s.TimeTasks)
+                .FirstOrDefault();
         }
 
         public void Savechanges()

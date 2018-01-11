@@ -11,9 +11,10 @@ using System;
 namespace Smarti.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180111111055_add-migration addTask")]
+    partial class addmigrationaddTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,9 +235,9 @@ namespace Smarti.Data.Migrations
                     b.ToTable("SocketDatas");
                 });
 
-            modelBuilder.Entity("Smarti.Models.TimeTask", b =>
+            modelBuilder.Entity("Smarti.Models.Task", b =>
                 {
-                    b.Property<int>("TimeTaskId")
+                    b.Property<int>("TaskId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("SocketId");
@@ -245,11 +246,11 @@ namespace Smarti.Data.Migrations
 
                     b.Property<bool>("Type");
 
-                    b.HasKey("TimeTaskId");
+                    b.HasKey("TaskId");
 
                     b.HasIndex("SocketId");
 
-                    b.ToTable("TimeTasks");
+                    b.ToTable("Task");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -320,10 +321,10 @@ namespace Smarti.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smarti.Models.TimeTask", b =>
+            modelBuilder.Entity("Smarti.Models.Task", b =>
                 {
                     b.HasOne("Smarti.Models.Socket", "Socket")
-                        .WithMany("TimeTasks")
+                        .WithMany("Tasks")
                         .HasForeignKey("SocketId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

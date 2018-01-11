@@ -20,5 +20,7 @@ namespace Smarti.Models
         public Room Room { get; set; }
 
         public virtual ICollection<SocketData> SocketDatas { get; set; }
+
+        public virtual ICollection<TimeTask> TimeTasks { get; set; }
     }
 }

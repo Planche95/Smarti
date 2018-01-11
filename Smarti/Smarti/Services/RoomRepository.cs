@@ -26,7 +26,7 @@ namespace Smarti.Services
 
         public void CreateRoom(Room room)
         {
-            _applicationDbContext.Add(room);
+            _applicationDbContext.Rooms.Add(room);
         }
 
         public void DeleteRoom(int roomId)

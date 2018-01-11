@@ -1,0 +1,58 @@
+﻿@model IEnumerable<TimeTaskListViewModel>
+
+@{
+    ViewData["Title"] = "TimeTasks";
+
+    string iconColor;
+    string timeTaskType;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class='btn-toolbar pull-right'>
+                <div class='btn-group'>
+                    <a class="btn btn-success" asp-controller="TimeTask" asp-action="Create" asp-route-id="@ViewContext.RouteData.Values["id"]"><i class="fa fa-plus"></i> Add time task</a>
+                </div>
+            </div>
+            <h2>Time Tasks for <strong>@ViewData["SocketName"]</strong> in <strong>@ViewData["RoomName"]</strong></h2>
+        </div>
+        <hr />
+    </div>
+</div>
+
+@foreach (TimeTaskListViewModel timeTask in Model)
+{
+    <div class="col-sm-12 col-lg-12 col-md-12">
+        <div class="thumbnail">
+            <div class="caption">
+                <div class="col">
+                    <div class='btn-toolbar pull-right'>
+                        <div class='btn-group'>
+                            <a class="btn btn-primary" asp-controller="TimeTask" asp-action="Edit" asp-route-id="@timeTask.TimeTaskId"><i class="fa fa-pencil-square-o"></i> Edit</a>
+                            <a class="btn btn-danger" asp-controller="TimeTask" asp-action="Delete" asp-route-id="@timeTask.TimeTaskId"><i class="fa fa-trash-o"></i> Delete</a>
+                        </div>
+                    </div>
+
+                    @if (timeTask.Type)
+                    {
+                        iconColor = "text-success";
+                        timeTaskType = "on";
+                    }
+                    else
+                    {
+                        iconColor = "text-danger";
+                        timeTaskType = "off";
+                    }
+                    
+                    <h4>
+                        <span class="fa-stack">
+                            <i class="fa fa-square fa-stack-2x @iconColor"></i>
+                            <i class="fa fa-power-off fa-stack-1x fa-inverse"></i>
+                        </span>
+                    <strong>Turn @timeTaskType</strong> the socket at <strong>@timeTask.TimeStamp.TimeOfDay</strong> on <strong>@timeTask.TimeStamp.ToShortDateString()</strong></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+}
