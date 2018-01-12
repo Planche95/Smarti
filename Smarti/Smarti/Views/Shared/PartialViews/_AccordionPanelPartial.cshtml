@@ -1,0 +1,34 @@
+﻿@model StatisticsViewModel
+
+@{
+    string icon = "down";
+    string expandClass = "";
+
+    if (Model.Expanded)
+    {
+        icon = "up";
+        expandClass = "in";
+    }
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a class="panel-link" data-toggle="collapse" href="#collapse_@ViewData["index"]">
+                <i class="fa fa-caret-@icon"></i> @Model.Header
+            </a>
+        </h4>
+    </div>
+    <div id="collapse_@ViewData["index"]" class="panel-collapse collapse @expandClass">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-lg-6">
+                    <div><canvas id="barChart_@ViewData["index"]"></canvas></div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6">
+                    <div><canvas id="pieChart_@ViewData["index"]"></canvas></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

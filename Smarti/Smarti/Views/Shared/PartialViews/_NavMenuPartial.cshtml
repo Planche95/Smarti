@@ -2,12 +2,16 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
+    DateTime yesterday = DateTime.Today.AddDays(-1);
+
     <ul class="nav navbar-nav">
         <li>
             <a asp-controller="Socket" asp-action="Index">Manage Devices</a>
         </li>
         <li>
-            <a asp-controller="Statistics" asp-action="Index">Statistics</a>
+            <a asp-controller="Statistics" asp-action="Index" 
+               asp-route-from="@yesterday.ToString("yyyy-MM-dd")" 
+               asp-route-to="@yesterday.ToString("yyyy-MM-dd")">Statistics</a>
         </li>
     </ul>
 }

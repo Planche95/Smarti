@@ -3,6 +3,18 @@
     padding-bottom: 20px;
 }
 
+@media (min-width: 992px) {
+    .pull-right-lg {
+        float: right;
+    }
+}
+
+@media (max-width: 768px) {
+    #search {
+        margin-top: 5px;
+    }
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {

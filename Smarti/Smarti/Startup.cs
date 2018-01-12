@@ -73,6 +73,7 @@ namespace Smarti
             services.AddTransient<ISocketRepository, SocketRepository>();
             services.AddTransient<ISocketDataRepository, SocketDataRepository>();
             services.AddTransient<ITimeTaskRepository, TimeTaskRepository>();
+            services.AddTransient<IChartGenerator, ChartGenerator>();
 
             // Add Database Initializer
             services.AddScoped<IDbInitializer, DbInitializer>();

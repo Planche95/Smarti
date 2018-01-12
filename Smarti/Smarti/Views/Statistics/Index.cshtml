@@ -1,0 +1,71 @@
+﻿@model List<StatisticsViewModel>
+
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<h2>Filter data</h2>
+
+<div class="thumbnail">
+    <div class="caption">
+        <div class="row">
+            <form method="get">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <h4 class="pull-right-lg">From</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 col-lg-4">
+                    <input type="date" class="form-control" name="from" value="@Context.Request.Query["from"]" 
+                           data-val="true" data-val-required="The email is required"/>
+                </div>
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <h4 class="pull-right-lg">To</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 col-lg-4">
+                    <input type="date" class="form-control" name="to" value="@Context.Request.Query["to"]" />
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2">
+                    <div class='btn-toolbar pull-right'>
+                        <button id="search" type="submit" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="panel-group" id="accordion">
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        @await Html.PartialAsync("_AccordionPanelPartial", Model[i],
+            new ViewDataDictionary(this.ViewData) { { "index", i } });
+    }
+</div>
+
+@section Scripts {
+<script>
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        @Html.Raw(Model[i].BarChart.CreateChartCode("barChart_" + i));
+        @Html.Raw(Model[i].PieChart.CreateChartCode("pieChart_" + i));
+    }
+
+    $(document).ready(function () {
+        $(".panel-link").click(function () {
+            var icon = $(this).children().first();
+
+            if (icon.hasClass("fa-caret-down")) {
+                icon.removeClass("fa-caret-down");
+                icon.addClass("fa-caret-up");
+            } else {
+                icon.removeClass("fa-caret-up");
+                icon.addClass("fa-caret-down");
+            }
+        });
+    });
+</script>
+}
