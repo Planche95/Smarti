@@ -10,7 +10,6 @@ namespace Smarti.Controllers
 {
     public class ErrorController : Controller
     {
-        [Route("error/{code:int}")]
         public IActionResult Index(int code)
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

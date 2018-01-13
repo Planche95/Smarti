@@ -108,13 +108,12 @@ namespace Smarti
             else
             {
                 app.UseExceptionHandler("/Error/Index");
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
 
             app.UseStaticFiles();
 
             app.UseAuthentication();
-
-            app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
             dbInitializer.Initialize();
 
@@ -123,6 +122,12 @@ namespace Smarti
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Socket}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                   name: "TimeTask",
+                   template: "TimeTask/{id?}",
+                   defaults: new { controller = "TimeTask", action = "Index" }
+                );
             });
         }
     }

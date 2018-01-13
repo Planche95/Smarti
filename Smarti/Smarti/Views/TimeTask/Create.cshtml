@@ -1,7 +1,7 @@
 ﻿@model TimeTaskCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create time task";
 }
 
 <h2>Create time task</h2>
@@ -31,7 +31,7 @@
                 <button type="submit" class="btn btn-success">
                     <i class="fa fa-check"></i> Create
                 </button>
-                <a asp-controller="TimeTask" asp-action="Index" asp-route-id="@Model.SocketId" class="btn btn-primary"><i class="fa fa-undo"></i> Back</a>
+                <a asp-route="TimeTask" asp-route-id="@Model.SocketId" class="btn btn-primary"><i class="fa fa-undo"></i> Back</a>
             </div>
         </form>
     </div>

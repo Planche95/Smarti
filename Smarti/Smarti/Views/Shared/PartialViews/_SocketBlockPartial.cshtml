@@ -13,7 +13,7 @@
             <div class='btn-group'>
                 <a class="btn btn-primary" asp-controller="Socket" asp-action="Edit" asp-route-id="@Model.SocketId"><i class="fa fa-cog"></i> Configure</a>
                 <a class="btn btn-danger" asp-controller="Socket" asp-action="Delete" asp-route-id="@Model.SocketId"><i class="fa fa-trash-o"></i> Delete</a>
-                <a class="btn btn-success" asp-controller="TimeTask" asp-action="Index" asp-route-id="@Model.SocketId"><i class="fa fa-clock-o"></i> Tasks</a>
+                <a class="btn btn-success" asp-route="TimeTask" asp-route-id="@Model.SocketId"><i class="fa fa-clock-o"></i> Tasks</a>
             </div>
         </div>
     </div>

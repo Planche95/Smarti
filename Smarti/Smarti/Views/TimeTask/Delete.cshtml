@@ -1,7 +1,7 @@
 ﻿@model TimeTaskDeleteViewModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete time task";
 
     string iconColor;
     string timeTaskType;
@@ -43,6 +43,6 @@
     <button type="submit" class="btn btn-danger">
         <i class="fa fa-trash-o"></i> Delete
     </button>
-    <a asp-controller="TimeTask" asp-action="Index" asp-route-id="@Model.SocketId" class="btn btn-primary"><i class="fa fa-undo"></i> Back</a>
+    <a asp-route="TimeTask" asp-route-id="@Model.SocketId" class="btn btn-primary"><i class="fa fa-undo"></i> Back</a>
 </form>
 
