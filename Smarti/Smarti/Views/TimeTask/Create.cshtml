@@ -2,6 +2,13 @@
 
 @{
     ViewData["Title"] = "Create time task";
+
+    string initType = "";
+
+    if (Model.Action)
+    {
+        initType = "active";
+    }
 }
 
 <h2>Create time task</h2>
@@ -11,14 +18,14 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="SocketId" />
-            <label asp-for="Type" class="control-label"></label>
+            <label asp-for="Action" class="control-label"></label>
             <div class="form-group">
-                <button type="button" class="btn btn-lg btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off">
+                <button type="button" class="btn btn-lg btn-toggle @initType" data-toggle="button" aria-pressed="false" autocomplete="off">
                     <div class="handle"></div>
                 </button>
                 <div class="checkbox">
                     <label hidden>
-                        <input id="hiddenType" asp-for="Type" /> 
+                        <input id="hiddenType" asp-for="Action" /> 
                     </label>
                 </div>
             </div>

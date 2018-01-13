@@ -34,7 +34,7 @@
                         </div>
                     </div>
 
-                    @if (timeTask.Type)
+                    @if (timeTask.Action)
                     {
                         iconColor = "text-success";
                         timeTaskType = "on";
@@ -50,7 +50,7 @@
                             <i class="fa fa-square fa-stack-2x @iconColor"></i>
                             <i class="fa fa-power-off fa-stack-1x fa-inverse"></i>
                         </span>
-                    <strong>Turn @timeTaskType</strong> the socket at <strong>@timeTask.TimeStamp.TimeOfDay</strong> on <strong>@timeTask.TimeStamp.ToShortDateString()</strong></h4>
+                    <strong>Turn @timeTaskType</strong> the socket at <strong>@timeTask.TimeStamp.ToString("HH:mm")</strong> on <strong>@timeTask.TimeStamp.ToShortDateString()</strong></h4>
                 </div>
             </div>
         </div>

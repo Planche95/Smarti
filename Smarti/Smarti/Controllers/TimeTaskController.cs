@@ -44,7 +44,7 @@ namespace Smarti.Controllers
             ViewData["RoomName"] = socket.Room.Name;
 
             IEnumerable<TimeTaskListViewModel> timeTaskViewModel = _mapper
-                .Map<IEnumerable<TimeTask>, IEnumerable<TimeTaskListViewModel>>(socket.TimeTasks.ToList());
+                .Map<IEnumerable<TimeTask>, IEnumerable<TimeTaskListViewModel>>(socket.TimeTasks.OrderBy(tt => tt.TimeStamp).ToList());
 
             return View(timeTaskViewModel);
         }
@@ -52,7 +52,7 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Create(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
-            TimeTask timeTask = new TimeTask { Socket = socket, SocketId = id };
+            TimeTask timeTask = new TimeTask { Socket = socket, SocketId = id, TimeStamp = DateTime.Today.AddDays(1) };
 
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, timeTask, Operations.Create);
@@ -70,11 +70,17 @@ namespace Smarti.Controllers
         [HttpPost]
         public IActionResult Create(TimeTaskCreateViewModel model)
         {
+            if (model.TimeStamp.CompareTo(DateTime.Now.AddMinutes(1)) <= 0)
+            {
+                ModelState.AddModelError("", "Date must be minimum 1 minute in the future");
+                return View(model);
+            }
+
             TimeTask timeTask = _mapper.Map<TimeTask>(model);
             _timeTaskRepository.CreateTimeTask(timeTask);
             _socketRepository.Savechanges();
 
-            return RedirectToAction("Index", "TimeTask", new { id = model.SocketId});
+            return RedirectToRoute("TimeTask", new { id = model.SocketId});
         }
 
         public async Task<IActionResult> Edit(int id)

@@ -8,7 +8,7 @@ namespace Smarti.Models.TimeTaskViewModel
     public class TimeTaskDeleteViewModel
     {
         public int TimeTaskId { get; set; }
-        public bool Type { get; set; }
+        public bool Action { get; set; }
         public DateTime TimeStamp { get; set; }
 
         public int SocketId { get; set; }

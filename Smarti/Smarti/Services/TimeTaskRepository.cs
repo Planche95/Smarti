@@ -40,7 +40,7 @@ namespace Smarti.Services
         {
             TimeTask editedTimeTask = _applicationDbContext.TimeTasks.First(tt => tt.TimeTaskId == timeTask.TimeTaskId);
 
-            editedTimeTask.Type = timeTask.Type;
+            editedTimeTask.Action = timeTask.Action;
             editedTimeTask.TimeStamp = timeTask.TimeStamp;
         }
 
