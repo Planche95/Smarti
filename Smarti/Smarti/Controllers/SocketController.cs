@@ -21,13 +21,15 @@ namespace Smarti.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRoomRepository _roomRepository;
         private readonly ISocketRepository _socketRepository;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, IMapper mapper)
+        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             _userManager = userManager;
             _roomRepository = roomRepository;
             _socketRepository = socketRepository;
+            _authorizationService = authorizationService;
             _mapper = mapper;
         }
 
@@ -45,9 +47,22 @@ namespace Smarti.Controllers
             return View(roomsViewModel);
         }
 
-        public IActionResult Create(int id)
+        public async Task<IActionResult> Create(int id)
         {
-            return View(new SocketCreateViewModel { RoomId = id });
+            Room room =_roomRepository.GetRoomById(id);
+            Socket socket = new Socket { Room = room, RoomId = id };
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, socket, Operations.Create);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
+            SocketCreateViewModel socketViewModel = _mapper.Map<SocketCreateViewModel>(socket);
+
+            return View(socketViewModel);
         }
 
         [HttpPost]
@@ -60,9 +75,18 @@ namespace Smarti.Controllers
             return RedirectToAction("Index", "Socket");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, socket, Operations.Update);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
             SocketEditViewModel socketViewModel = _mapper.Map<SocketEditViewModel>(socket);
             socketViewModel.Rooms = GetRoomsSelectList();
 
@@ -79,9 +103,18 @@ namespace Smarti.Controllers
             return RedirectToAction("Index", "Socket");
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, socket, Operations.Delete);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
             SocketDeleteViewModel socketViewModel = _mapper.Map<SocketDeleteViewModel>(socket);
 
             return View(socketViewModel);
@@ -102,7 +135,9 @@ namespace Smarti.Controllers
         {
             List<SelectListItem> rooms = new List<SelectListItem>();
 
-            foreach (Room room in _roomRepository.Rooms.ToList())
+            foreach (Room room in _roomRepository.Rooms
+                                                 .Where(r => r.UserId.Equals(_userManager.GetUserId(User)))
+                                                 .ToList())
             {
                 rooms.Add(new SelectListItem()
                 {

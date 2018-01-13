@@ -17,12 +17,14 @@ namespace Smarti.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRoomRepository _roomRepository;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public RoomController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, IMapper mapper)
+        public RoomController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             _userManager = userManager;
             _roomRepository = roomRepository;
+            _authorizationService = authorizationService;
             _mapper = mapper;
         }
 
@@ -43,9 +45,18 @@ namespace Smarti.Controllers
             return RedirectToAction("Index", "Socket");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             Room room = _roomRepository.GetRoomById(id);
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, room, Operations.Update);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
             RoomEditViewModel roomEditViewModel = _mapper.Map<RoomEditViewModel>(room);
             
             return View(roomEditViewModel);
@@ -62,9 +73,18 @@ namespace Smarti.Controllers
             return RedirectToAction("Index", "Socket");
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             Room room = _roomRepository.GetRoomById(id);
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, room, Operations.Delete);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
             RoomDeleteViewModel roomDeleteViewModel = _mapper.Map<RoomDeleteViewModel>(room);
 
             return View(roomDeleteViewModel);

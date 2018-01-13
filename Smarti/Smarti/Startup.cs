@@ -12,6 +12,7 @@ using Smarti.Data;
 using Smarti.Models;
 using Smarti.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Smarti
 {
@@ -74,6 +75,11 @@ namespace Smarti
             services.AddTransient<ISocketDataRepository, SocketDataRepository>();
             services.AddTransient<ITimeTaskRepository, TimeTaskRepository>();
             services.AddTransient<IChartGenerator, ChartGenerator>();
+
+            //Resource based authorization
+            services.AddTransient<IAuthorizationHandler, RoomAuthorizationCrudHandler>();
+            services.AddTransient<IAuthorizationHandler, SocketAuthorizationCrudHandler>();
+            services.AddTransient<IAuthorizationHandler, TimeTaskAuthorizationCrudHandler>();
 
             // Add Database Initializer
             services.AddScoped<IDbInitializer, DbInitializer>();

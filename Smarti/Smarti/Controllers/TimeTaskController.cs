@@ -16,18 +16,30 @@ namespace Smarti.Controllers
     {
         private readonly ITimeTaskRepository _timeTaskRepository;
         private readonly ISocketRepository _socketRepository;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public TimeTaskController(ITimeTaskRepository timeTaskRepository, ISocketRepository socketRepository, IMapper mapper)
+        public TimeTaskController(ITimeTaskRepository timeTaskRepository, ISocketRepository socketRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             _timeTaskRepository = timeTaskRepository;
             _socketRepository = socketRepository;
+            _authorizationService = authorizationService;
             _mapper = mapper;
         }
 
-        public IActionResult Index(int id)
+        public async Task<IActionResult> Index(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
+            TimeTask timeTask = new TimeTask { Socket = socket };
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, timeTask, Operations.Read);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
             ViewData["SocketName"] = socket.Name;
             ViewData["RoomName"] = socket.Room.Name;
 
@@ -37,9 +49,22 @@ namespace Smarti.Controllers
             return View(timeTaskViewModel);
         }
 
-        public IActionResult Create(int id)
+        public async Task<IActionResult> Create(int id)
         {
-            return View(new TimeTaskCreateViewModel { SocketId = id });
+            Socket socket = _socketRepository.GetSocketById(id);
+            TimeTask timeTask = new TimeTask { Socket = socket, SocketId = id };
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, timeTask, Operations.Create);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
+            TimeTaskCreateViewModel timeTaskViewModel = _mapper.Map<TimeTaskCreateViewModel>(timeTask);
+
+            return View(timeTaskViewModel);
         }
 
         [HttpPost]
@@ -52,9 +77,18 @@ namespace Smarti.Controllers
             return RedirectToAction("Index", "TimeTask", new { id = model.SocketId});
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             TimeTask timeTask = _timeTaskRepository.GetTimeTaskById(id);
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, timeTask, Operations.Update);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
             TimeTaskEditViewModel timeTaskViewModel = _mapper.Map<TimeTaskEditViewModel>(timeTask);
 
             return View(timeTaskViewModel);
@@ -70,10 +104,18 @@ namespace Smarti.Controllers
             return RedirectToAction("Index", "TimeTask", new { id = model.SocketId });
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             TimeTask timeTask = _timeTaskRepository.GetTimeTaskById(id);
-            
+
+            AuthorizationResult authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, timeTask, Operations.Delete);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ForbidResult();
+            }
+
             ViewData["SocketName"] = timeTask.Socket.Name;
             ViewData["RoomName"] = timeTask.Socket.Room.Name;
 
