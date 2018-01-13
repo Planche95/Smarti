@@ -8,9 +8,11 @@ using Smarti.Services;
 using Smarti.Models;
 using Microsoft.EntityFrameworkCore;
 using Smarti.Models.StatisticsViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Smarti.Controllers
 {
+    [Authorize]
     public class StatisticsController : Controller
     {
         private readonly IRoomRepository _roomRepository;

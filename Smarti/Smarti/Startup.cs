@@ -101,12 +101,14 @@ namespace Smarti
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Index");
             }
 
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
             dbInitializer.Initialize();
 
@@ -114,7 +116,7 @@ namespace Smarti
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Socket}/{action=Index}/{id?}");
             });
         }
     }

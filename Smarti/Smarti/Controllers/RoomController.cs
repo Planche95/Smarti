@@ -8,9 +8,11 @@ using Smarti.Services;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Smarti.Models.RoomViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Smarti.Controllers
 {
+    [Authorize]
     public class RoomController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

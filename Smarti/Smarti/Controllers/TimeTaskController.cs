@@ -7,9 +7,11 @@ using Smarti.Services;
 using AutoMapper;
 using Smarti.Models;
 using Smarti.Models.TimeTaskViewModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Smarti.Controllers
 {
+    [Authorize]
     public class TimeTaskController : Controller
     {
         private readonly ITimeTaskRepository _timeTaskRepository;

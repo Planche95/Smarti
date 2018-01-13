@@ -44,6 +44,11 @@ namespace Smarti.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string returnUrl = null)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Socket");
+            }
+
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -110,6 +115,11 @@ namespace Smarti.Controllers
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Socket");
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -134,7 +144,7 @@ namespace Smarti.Controllers
 
                     //await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("EmailConfirmation", "Account");
                 }
                 AddErrors(result);
             }
@@ -143,13 +153,20 @@ namespace Smarti.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult EmailConfirmation()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction("Index", "Socket");
         }
 
         [HttpGet]
@@ -158,7 +175,7 @@ namespace Smarti.Controllers
         {
             if (userId == null || code == null)
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index", "Socket");
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -472,7 +489,7 @@ namespace Smarti.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index", "Socket");
             }
         }
 

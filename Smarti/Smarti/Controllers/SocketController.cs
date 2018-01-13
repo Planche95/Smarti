@@ -11,9 +11,11 @@ using Smarti.Models.SocketsViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Smarti.Models.RoomViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Smarti.Controllers
 {
+    [Authorize]
     public class SocketController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
