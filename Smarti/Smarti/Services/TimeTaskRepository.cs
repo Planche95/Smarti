@@ -42,6 +42,7 @@ namespace Smarti.Services
 
             editedTimeTask.Action = timeTask.Action;
             editedTimeTask.TimeStamp = timeTask.TimeStamp;
+            editedTimeTask.BackgroundJobId = timeTask.BackgroundJobId;
         }
 
         public TimeTask GetTimeTaskById(int timeTaskId)

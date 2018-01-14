@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Smarti.Models.RoomViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Hangfire;
 
 namespace Smarti.Controllers
 {
@@ -17,13 +19,15 @@ namespace Smarti.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRoomRepository _roomRepository;
+        private readonly ITimeTaskRepository _timeTaskRepository;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public RoomController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, IAuthorizationService authorizationService, IMapper mapper)
+        public RoomController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ITimeTaskRepository timeTaskRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             _userManager = userManager;
             _roomRepository = roomRepository;
+            _timeTaskRepository = timeTaskRepository;
             _authorizationService = authorizationService;
             _mapper = mapper;
         }
@@ -93,6 +97,16 @@ namespace Smarti.Controllers
         [HttpPost]
         public IActionResult Delete(RoomDeleteViewModel model)
         {
+            List <TimeTask> timeTasks =_timeTaskRepository.TimeTasks
+                                            .Include(tt => tt.Socket)
+                                            .Where(tt => tt.Socket.RoomId == model.RoomId)
+                                            .ToList();
+
+            foreach (TimeTask timeTask in timeTasks)
+            {
+                BackgroundJob.Delete(timeTask.BackgroundJobId);
+            }
+
             _roomRepository.DeleteRoom(model.RoomId);
             _roomRepository.Savechanges();
 

@@ -13,6 +13,8 @@ using Smarti.Models;
 using Smarti.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Hangfire;
+using Hangfire.Storage;
 
 namespace Smarti
 {
@@ -87,6 +89,9 @@ namespace Smarti
             //Register for secrets
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
+            // HangFire for background tasks
+            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddAutoMapper();
 
             services.AddMvc()
@@ -96,7 +101,6 @@ namespace Smarti
                 });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
@@ -112,8 +116,10 @@ namespace Smarti
             }
 
             app.UseStaticFiles();
-
             app.UseAuthentication();
+
+            app.UseHangfireServer();
+            app.UseHangfireDashboard();
 
             dbInitializer.Initialize();
 

@@ -11,9 +11,10 @@ using System;
 namespace Smarti.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180114182355_AddBackgroundJobId")]
+    partial class AddBackgroundJobId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,7 +242,7 @@ namespace Smarti.Data.Migrations
 
                     b.Property<bool>("Action");
 
-                    b.Property<string>("BackgroundJobId");
+                    b.Property<string>("BackgroungJobId");
 
                     b.Property<int>("SocketId");
 

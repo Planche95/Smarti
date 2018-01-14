@@ -12,6 +12,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Smarti.Models.RoomViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Hangfire;
 
 namespace Smarti.Controllers
 {
@@ -21,14 +22,16 @@ namespace Smarti.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRoomRepository _roomRepository;
         private readonly ISocketRepository _socketRepository;
+        private readonly ITimeTaskRepository _timeTaskRepository;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, IAuthorizationService authorizationService, IMapper mapper)
+        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, ITimeTaskRepository timeTaskRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             _userManager = userManager;
             _roomRepository = roomRepository;
             _socketRepository = socketRepository;
+            _timeTaskRepository = timeTaskRepository;
             _authorizationService = authorizationService;
             _mapper = mapper;
         }
@@ -123,6 +126,16 @@ namespace Smarti.Controllers
         [HttpPost]
         public IActionResult Delete(SocketDeleteViewModel model)
         {
+            List<TimeTask> timeTasks = _timeTaskRepository.TimeTasks
+                                            .Include(tt => tt.Socket)
+                                            .Where(tt => tt.Socket.SocketId == model.SocketId)
+                                            .ToList();
+
+            foreach (TimeTask timeTask in timeTasks)
+            {
+                BackgroundJob.Delete(timeTask.BackgroundJobId);
+            }
+
             _socketRepository.DeleteSocket(model.SocketId);
             _socketRepository.Savechanges();
 

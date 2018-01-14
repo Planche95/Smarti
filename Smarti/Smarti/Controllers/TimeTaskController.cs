@@ -8,6 +8,8 @@ using AutoMapper;
 using Smarti.Models;
 using Smarti.Models.TimeTaskViewModel;
 using Microsoft.AspNetCore.Authorization;
+using Hangfire;
+using Hangfire.Storage;
 
 namespace Smarti.Controllers
 {
@@ -77,8 +79,14 @@ namespace Smarti.Controllers
             }
 
             TimeTask timeTask = _mapper.Map<TimeTask>(model);
+
+            string backgroundJobId = BackgroundJob.Schedule(() => ExecuteTimeTask(timeTask), timeTask.TimeStamp);
+            timeTask.BackgroundJobId = backgroundJobId;
+
             _timeTaskRepository.CreateTimeTask(timeTask);
             _socketRepository.Savechanges();
+
+            
 
             return RedirectToRoute("TimeTask", new { id = model.SocketId});
         }
@@ -104,6 +112,11 @@ namespace Smarti.Controllers
         public IActionResult Edit(TimeTaskEditViewModel model)
         {
             TimeTask timeTask = _mapper.Map<TimeTask>(model);
+
+            BackgroundJob.Delete(timeTask.BackgroundJobId);
+            string backgroundJobId = BackgroundJob.Schedule(() => ExecuteTimeTask(timeTask), timeTask.TimeStamp);
+            timeTask.BackgroundJobId = backgroundJobId;
+
             _timeTaskRepository.EditTimeTask(timeTask);
             _timeTaskRepository.Savechanges();
 
@@ -133,10 +146,30 @@ namespace Smarti.Controllers
         [HttpPost]
         public IActionResult Delete(TimeTaskDeleteViewModel model)
         {
+            BackgroundJob.Delete(model.BackgroundJobId);
+
             _timeTaskRepository.DeleteTimeTask(model.TimeTaskId);
             _timeTaskRepository.Savechanges();
 
             return RedirectToAction("Index", "TimeTask", new { id = model.SocketId });
         }
+
+        #region Helpers
+
+        public void ExecuteTimeTask(TimeTask timeTask)
+        {
+            DateTime startTime = DateTime.Now;
+
+            if (startTime.Subtract(timeTask.TimeStamp).Duration().Minutes == 0)
+            {
+                //Wyslij na server mqtt
+                Console.Write("break");
+            }
+
+            _timeTaskRepository.DeleteTimeTask(timeTask.TimeTaskId);
+            _timeTaskRepository.Savechanges();
+        }
+
+        #endregion
     }
 }
