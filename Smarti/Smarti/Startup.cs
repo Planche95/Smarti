@@ -15,6 +15,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Hangfire;
 using Hangfire.Storage;
+using uPLibrary.Networking.M2Mqtt;
+using System.Text;
+using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace Smarti
 {
@@ -77,6 +80,8 @@ namespace Smarti
             services.AddTransient<ISocketDataRepository, SocketDataRepository>();
             services.AddTransient<ITimeTaskRepository, TimeTaskRepository>();
             services.AddTransient<IChartGenerator, ChartGenerator>();
+            services.AddTransient<IMqttAppClient, MqttAppClient>();
+            services.AddSingleton<IMqttAppClientSingleton, MqttAppClientSingleton>();
 
             //Resource based authorization
             services.AddTransient<IAuthorizationHandler, RoomAuthorizationCrudHandler>();

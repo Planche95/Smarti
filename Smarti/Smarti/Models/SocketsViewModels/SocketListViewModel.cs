@@ -9,5 +9,6 @@ namespace Smarti.Models.SocketsViewModels
     {
         public int SocketId { get; set; }
         public string Name { get; set; }
+        public string DeviceId { get; set; }
     }
 }

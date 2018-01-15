@@ -4,9 +4,13 @@
     <div class="thumbnail">
         <div class="caption text-center">
             <h3>
-                <a asp-controller="Socket" asp-action="Edit" asp-route-id="@Model.SocketId">@Model.Name</a>
+                <span id="icon_@Model.DeviceId" class="fa-stack">
+                    <i class="fa fa-square fa-stack-2x"></i>
+                    <i class="fa fa-power-off fa-stack-1x fa-inverse"></i>
+                </span>
+                @Model.Name
             </h3>
-            <button type="button" class="btn btn-lg btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off">
+            <button id="@Model.DeviceId" type="button" class="btn btn-lg btn-toggle disabled" data-toggle="" aria-pressed="false" autocomplete="off">
                 <div class="handle"></div>
             </button>
             <hr />

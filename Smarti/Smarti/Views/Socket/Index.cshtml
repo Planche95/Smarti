@@ -40,6 +40,81 @@
         }
 
     </div>
+}
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function checkSockets() {
+                $.ajax({
+                    url: '/Socket/CheckSockets/',
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log("start");
 
+                        $(".btn-toggle").each(function () {
+                            var devid = $(this).attr('id');
+                            var res = response[devid];
+                            if (res == null) {
+                                $(this).addClass("disabled")
+                                        .attr('data-toggle', "")
+                                        .removeClass("active");
+                                $("#icon_" + devid).removeClass("text-danger text-success");
+                            }
+                            else if (res == true) {
+                                $(this).removeClass("disabled")
+                                        .attr('data-toggle', "button")
+                                        .addClass("active");
+                                $("#icon_" + devid).removeClass("text-danger")
+                                    .addClass("text-success");
+                            }
+                            else if (res == false) {
+                                $(this).removeClass("disabled")
+                                        .attr('data-toggle', "button")
+                                        .removeClass("active");
+                                $("#icon_" + devid).removeClass("text-success")
+                                    .addClass("text-danger");
+                            }
+                        });
+                    }
+                });
+            }
+
+            $(".btn-toggle").click(function () {
+                var devid = $(this).attr('id');
+                var el = $("#icon_" + devid);
+                var action;
+                if (el.hasClass("text-success")) {
+                    el.removeClass("text-success")
+                        .addClass("text-danger");
+                    action = false;
+                } else
+                {
+                    el.removeClass("text-danger")
+                        .addClass("text-success");
+                    action = true;
+                }
+
+                var sendData =
+                    {
+                        deviceId: devid,
+                        value: action
+                    };
+
+                $.ajax({
+                    url: '/Socket/ChangeState/',
+                    type: "POST",
+                    dataType: "json",
+                    data: sendData
+                });
+            });
+
+            checkSockets();
+
+            window.setInterval(function () {
+                checkSockets();
+            }, 5000);
+        });
+    </script> 
 }

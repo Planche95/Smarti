@@ -19,13 +19,15 @@ namespace Smarti.Controllers
         private readonly ITimeTaskRepository _timeTaskRepository;
         private readonly ISocketRepository _socketRepository;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IMqttAppClientSingleton _mqttAppClientSingleton;
         private readonly IMapper _mapper;
 
-        public TimeTaskController(ITimeTaskRepository timeTaskRepository, ISocketRepository socketRepository, IAuthorizationService authorizationService, IMapper mapper)
+        public TimeTaskController(ITimeTaskRepository timeTaskRepository, ISocketRepository socketRepository, IAuthorizationService authorizationService, IMqttAppClientSingleton mqttAppClientSingleton, IMapper mapper)
         {
             _timeTaskRepository = timeTaskRepository;
             _socketRepository = socketRepository;
             _authorizationService = authorizationService;
+            _mqttAppClientSingleton = mqttAppClientSingleton;
             _mapper = mapper;
         }
 
@@ -80,13 +82,14 @@ namespace Smarti.Controllers
 
             TimeTask timeTask = _mapper.Map<TimeTask>(model);
 
-            string backgroundJobId = BackgroundJob.Schedule(() => ExecuteTimeTask(timeTask), timeTask.TimeStamp);
-            timeTask.BackgroundJobId = backgroundJobId;
-
             _timeTaskRepository.CreateTimeTask(timeTask);
             _socketRepository.Savechanges();
 
-            
+            string backgroundJobId = BackgroundJob.Schedule(() => ExecuteTimeTask(timeTask), timeTask.TimeStamp);
+            timeTask.BackgroundJobId = backgroundJobId;
+
+            _timeTaskRepository.EditTimeTask(timeTask);
+            _socketRepository.Savechanges();
 
             return RedirectToRoute("TimeTask", new { id = model.SocketId});
         }
@@ -162,8 +165,8 @@ namespace Smarti.Controllers
 
             if (startTime.Subtract(timeTask.TimeStamp).Duration().Minutes == 0)
             {
-                //Wyslij na server mqtt
-                Console.Write("break");
+                Socket socket = _socketRepository.GetSocketById(timeTask.SocketId);
+                _mqttAppClientSingleton.Publish("sockets", timeTask.Action.ToString());
             }
 
             _timeTaskRepository.DeleteTimeTask(timeTask.TimeTaskId);

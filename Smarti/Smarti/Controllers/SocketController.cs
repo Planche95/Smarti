@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Smarti.Models.RoomViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Hangfire;
+using uPLibrary.Networking.M2Mqtt.Messages;
+using System.Text;
 
 namespace Smarti.Controllers
 {
@@ -24,15 +26,20 @@ namespace Smarti.Controllers
         private readonly ISocketRepository _socketRepository;
         private readonly ITimeTaskRepository _timeTaskRepository;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IMqttAppClient _mqttAppClient;
         private readonly IMapper _mapper;
 
-        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, ITimeTaskRepository timeTaskRepository, IAuthorizationService authorizationService, IMapper mapper)
+        //IEnumerable<string> socketsDeviceIds;
+        Dictionary<string, bool?> result;
+
+        public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, ITimeTaskRepository timeTaskRepository, IAuthorizationService authorizationService, IMqttAppClient mqttAppClient, IMapper mapper)
         {
             _userManager = userManager;
             _roomRepository = roomRepository;
             _socketRepository = socketRepository;
             _timeTaskRepository = timeTaskRepository;
             _authorizationService = authorizationService;
+            _mqttAppClient = mqttAppClient;
             _mapper = mapper;
         }
 
@@ -43,6 +50,10 @@ namespace Smarti.Controllers
                         .Where(r => r.ApplicationUser.Id.Equals(_userManager.GetUserId(User)))
                         .Include(r => r.Sockets)
                         .ToList();
+
+            //socketsDeviceIds = rooms.SelectMany(r => r.Sockets)
+            //                        .Select(s => s.DeviceId)
+            //                        .ToList();
 
             IEnumerable<RoomListViewModel> roomsViewModel = _mapper
                 .Map<IEnumerable<Room>, IEnumerable<RoomListViewModel>>(rooms);
@@ -71,6 +82,14 @@ namespace Smarti.Controllers
         [HttpPost]
         public IActionResult Create(SocketCreateViewModel model)
         {
+            bool isDeviceIdExist = _socketRepository.Sockets.Any(s => s.DeviceId == model.DeviceId);
+
+            if (isDeviceIdExist)
+            {
+                ModelState.AddModelError("", "This device id is already asigned!");
+                return View(model);
+            }
+
             Socket socket = _mapper.Map<Socket>(model);
             _socketRepository.CreateSocket(socket);
             _socketRepository.Savechanges();
@@ -123,6 +142,8 @@ namespace Smarti.Controllers
             return View(socketViewModel);
         }
 
+        #region MqttHandlers
+
         [HttpPost]
         public IActionResult Delete(SocketDeleteViewModel model)
         {
@@ -141,6 +162,45 @@ namespace Smarti.Controllers
 
             return RedirectToAction("Index", "Socket");
         }
+
+        [HttpPost]
+        public Dictionary<string, bool?> CheckSockets()
+        {
+            result = new Dictionary<string, bool?>();
+
+            //TODO send this to view
+            string[] topics = _socketRepository.Sockets
+                .Include(s => s.Room)
+                .Where(s => s.Room.UserId.Equals(_userManager.GetUserId(User)))
+                .Select(s => s.DeviceId)
+                .ToArray();
+
+            _mqttAppClient.SubscribeToMany(topics);
+            _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
+
+            foreach (string topic in topics)
+            {
+                _mqttAppClient.Publish("sockets/" + topic, "CheckState");
+                result.Add(topic, null);
+            }
+
+            System.Threading.Thread.Sleep(1000);
+
+            return result;
+        }
+
+        void AckReceived(object sender, MqttMsgPublishEventArgs args)
+        {
+            result[args.Topic] = Convert.ToBoolean(Encoding.UTF8.GetString(args.Message));
+        }
+
+        [HttpPost]
+        public void ChangeState(string deviceId, bool value)
+        {
+            _mqttAppClient.Publish("sockets/" + deviceId, value.ToString());
+        }
+
+        #endregion
 
         #region Helpers
 
