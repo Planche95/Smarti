@@ -24,7 +24,7 @@ namespace Smarti.Data
             _roleManager = roleManager;
         }
 
-        public async void Initialize()
+        public void Initialize()
         {
             _context.Database.Migrate();
 
@@ -35,7 +35,7 @@ namespace Smarti.Data
             string user = "me@myemail.com";
             string password = "z0mgchangethis";
             _userManager.CreateAsync(new ApplicationUser { UserName = user, Email = user, EmailConfirmed = true }, password).GetAwaiter().GetResult();
-            await _userManager.AddToRoleAsync(await _userManager.FindByNameAsync(user), "Administrator");
+            _userManager.AddToRoleAsync(_userManager.FindByNameAsync(user).GetAwaiter().GetResult(), "Administrator").GetAwaiter().GetResult();
         }
     }
 }

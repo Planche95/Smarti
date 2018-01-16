@@ -56,7 +56,7 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Create(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
-            TimeTask timeTask = new TimeTask { Socket = socket, SocketId = id, TimeStamp = DateTime.Today.AddDays(1) };
+            TimeTask timeTask = new TimeTask { Socket = socket, SocketId = id, TimeStamp = DateTime.Today };
 
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, timeTask, Operations.Create);

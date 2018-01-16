@@ -26,10 +26,13 @@ namespace Smarti.Controllers
 
         public IActionResult Index(DateTime From, DateTime To)
         {
-            if(From.Equals(new DateTime(1, 1, 1)) || To.Equals(new DateTime(1, 1, 1)))
+            //To get data for one day from (From == To)
+            To = To.AddDays(1);
+
+            if (From.Equals(new DateTime(1, 1, 1)) || To.Equals(new DateTime(1, 1, 2)))
             {
                 From = DateTime.Today.AddDays(-1);
-                To = DateTime.Today.AddDays(-1);
+                To = DateTime.Today;
 
                 ModelState.AddModelError("", "Dates can't be empty! Statistics are displayed for " + DateTime.Today.AddDays(-1).ToShortDateString());
             }
@@ -37,7 +40,7 @@ namespace Smarti.Controllers
             if (DateTime.Compare(From, To) > 0)
             {
                 From = DateTime.Today.AddDays(-1);
-                To = DateTime.Today.AddDays(-1);
+                To = DateTime.Today;
 
                 ModelState.AddModelError("", "Date \"To\" can't be before date \"From\"! Statistics are displayed for " + DateTime.Today.AddDays(-1).ToShortDateString());
             }
@@ -95,7 +98,7 @@ namespace Smarti.Controllers
                     room.Sockets
                         .Where(s => s.Name.Equals(socketsNames[j]))
                         .SelectMany(s => s.SocketDatas)
-                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 &&  sd.TimeStamp.CompareTo(to) <= 0)
+                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 &&  sd.TimeStamp.CompareTo(to) < 0)
                         .Sum(sd => sd.Value)
                     );
             }
@@ -115,7 +118,7 @@ namespace Smarti.Controllers
         {
             List<SocketData> validatedData = room.Sockets
                         .SelectMany(s => s.SocketDatas)
-                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) <= 0)
+                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) < 0)
                         .ToList();
 
             List<double> data = new List<double>();
@@ -151,7 +154,7 @@ namespace Smarti.Controllers
                     rooms.Where(r => r.Name.Equals(rooms[i].Name))
                     .SelectMany(r => r.Sockets)
                     .SelectMany(s => s.SocketDatas)
-                    .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) <= 0)
+                    .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) < 0)
                     .Sum(sd => sd.Value)
                     );
             }
@@ -172,7 +175,7 @@ namespace Smarti.Controllers
             List<SocketData> validatedData = rooms
                         .SelectMany(r => r.Sockets)
                         .SelectMany(s => s.SocketDatas)
-                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) <= 0)
+                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) < 0)
                         .ToList();
 
             List<double> data = new List<double>();

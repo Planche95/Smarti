@@ -29,7 +29,6 @@ namespace Smarti.Controllers
         private readonly IMqttAppClient _mqttAppClient;
         private readonly IMapper _mapper;
 
-        //IEnumerable<string> socketsDeviceIds;
         Dictionary<string, bool?> result;
 
         public SocketController(UserManager<ApplicationUser> userManager, IRoomRepository roomRepository, ISocketRepository socketRepository, ITimeTaskRepository timeTaskRepository, IAuthorizationService authorizationService, IMqttAppClient mqttAppClient, IMapper mapper)
@@ -50,10 +49,6 @@ namespace Smarti.Controllers
                         .Where(r => r.ApplicationUser.Id.Equals(_userManager.GetUserId(User)))
                         .Include(r => r.Sockets)
                         .ToList();
-
-            //socketsDeviceIds = rooms.SelectMany(r => r.Sockets)
-            //                        .Select(s => s.DeviceId)
-            //                        .ToList();
 
             IEnumerable<RoomListViewModel> roomsViewModel = _mapper
                 .Map<IEnumerable<Room>, IEnumerable<RoomListViewModel>>(rooms);
@@ -90,6 +85,23 @@ namespace Smarti.Controllers
                 return View(model);
             }
 
+            result = new Dictionary<string, bool?>
+            {
+                { model.DeviceId, null }
+            };
+
+            _mqttAppClient.SubscribeToMany(new string[] { model.DeviceId });
+            _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
+            _mqttAppClient.Publish("sockets/" + model.DeviceId, "CheckState");
+
+            System.Threading.Thread.Sleep(1000);
+
+            if(result[model.DeviceId] == null)
+            {
+                ModelState.AddModelError("", "Failed connection attempt, make shure that socket is connected!");
+                return View(model);
+            }
+
             Socket socket = _mapper.Map<Socket>(model);
             _socketRepository.CreateSocket(socket);
             _socketRepository.Savechanges();
@@ -118,6 +130,32 @@ namespace Smarti.Controllers
         [HttpPost]
         public IActionResult Edit(SocketEditViewModel model)
         {
+            bool isDeviceIdExist = _socketRepository.Sockets.Any(s => s.DeviceId == model.DeviceId 
+                                                                    && s.SocketId != model.SocketId);
+
+            if (isDeviceIdExist)
+            {
+                ModelState.AddModelError("", "This device id is already asigned!");
+                return View(model);
+            }
+
+            result = new Dictionary<string, bool?>
+            {
+                { model.DeviceId, null }
+            };
+
+            _mqttAppClient.SubscribeToMany(new string[] { model.DeviceId });
+            _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
+            _mqttAppClient.Publish("sockets/" + model.DeviceId, "CheckState");
+
+            System.Threading.Thread.Sleep(1000);
+
+            if (result[model.DeviceId] == null)
+            {
+                ModelState.AddModelError("", "Failed connection attempt, make shure that socket is connected!");
+                return View(model);
+            }
+
             Socket socket = _mapper.Map<Socket>(model);
             _socketRepository.EditSocket(socket);
             _socketRepository.Savechanges();
@@ -142,8 +180,6 @@ namespace Smarti.Controllers
             return View(socketViewModel);
         }
 
-        #region MqttHandlers
-
         [HttpPost]
         public IActionResult Delete(SocketDeleteViewModel model)
         {
@@ -163,25 +199,30 @@ namespace Smarti.Controllers
             return RedirectToAction("Index", "Socket");
         }
 
+        #region MqttHandlers
+
         [HttpPost]
         public Dictionary<string, bool?> CheckSockets()
         {
             result = new Dictionary<string, bool?>();
 
-            //TODO send this to view
-            string[] topics = _socketRepository.Sockets
-                .Include(s => s.Room)
-                .Where(s => s.Room.UserId.Equals(_userManager.GetUserId(User)))
-                .Select(s => s.DeviceId)
-                .ToArray();
-
-            _mqttAppClient.SubscribeToMany(topics);
-            _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
-
-            foreach (string topic in topics)
+            if (_socketRepository.Sockets.Any())
             {
-                _mqttAppClient.Publish("sockets/" + topic, "CheckState");
-                result.Add(topic, null);
+                //TODO send this to view
+                string[] topics = _socketRepository.Sockets
+                    .Include(s => s.Room)
+                    .Where(s => s.Room.UserId.Equals(_userManager.GetUserId(User)))
+                    .Select(s => s.DeviceId)
+                    .ToArray();
+
+                _mqttAppClient.SubscribeToMany(topics);
+                _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
+
+                foreach (string topic in topics)
+                {
+                    _mqttAppClient.Publish("sockets/" + topic, "CheckState");
+                    result.Add(topic, null);
+                }
             }
 
             System.Threading.Thread.Sleep(1000);
