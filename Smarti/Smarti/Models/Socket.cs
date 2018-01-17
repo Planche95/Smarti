@@ -13,7 +13,7 @@ namespace Smarti.Models
         [MaxLength(15)]
         public string Name { get; set; }
 
-        [MaxLength(8)]
+        [MaxLength(14)]
         public string DeviceId { get; set; }
 
         public int RoomId { get; set; }

@@ -90,9 +90,9 @@ namespace Smarti.Controllers
                 { model.DeviceId, null }
             };
 
-            _mqttAppClient.SubscribeToMany(new string[] { model.DeviceId });
+            _mqttAppClient.SubscribeToMany(new string[] { "sockets/" + model.DeviceId });
             _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
-            _mqttAppClient.Publish("sockets/" + model.DeviceId, "CheckState");
+            _mqttAppClient.Publish(model.DeviceId, "Check");
 
             System.Threading.Thread.Sleep(1000);
 
@@ -144,9 +144,9 @@ namespace Smarti.Controllers
                 { model.DeviceId, null }
             };
 
-            _mqttAppClient.SubscribeToMany(new string[] { model.DeviceId });
+            _mqttAppClient.SubscribeToMany(new string[] { "sockets/" + model.DeviceId });
             _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
-            _mqttAppClient.Publish("sockets/" + model.DeviceId, "CheckState");
+            _mqttAppClient.Publish(model.DeviceId, "Check");
 
             System.Threading.Thread.Sleep(1000);
 
@@ -215,12 +215,14 @@ namespace Smarti.Controllers
                     .Select(s => s.DeviceId)
                     .ToArray();
 
-                _mqttAppClient.SubscribeToMany(topics);
+                string[] subTopics = topics.Select(t => "sockets/" + t).ToArray();
+
+                _mqttAppClient.SubscribeToMany(subTopics);
                 _mqttAppClient.Client.MqttMsgPublishReceived += AckReceived;
 
                 foreach (string topic in topics)
                 {
-                    _mqttAppClient.Publish("sockets/" + topic, "CheckState");
+                    _mqttAppClient.Publish(topic, "Check");
                     result.Add(topic, null);
                 }
             }
@@ -232,13 +234,13 @@ namespace Smarti.Controllers
 
         void AckReceived(object sender, MqttMsgPublishEventArgs args)
         {
-            result[args.Topic] = Convert.ToBoolean(Encoding.UTF8.GetString(args.Message));
+            result[args.Topic.Split("/")[1]] = Convert.ToBoolean(Encoding.UTF8.GetString(args.Message));
         }
 
         [HttpPost]
         public void ChangeState(string deviceId, bool value)
         {
-            _mqttAppClient.Publish("sockets/" + deviceId, value.ToString());
+            _mqttAppClient.Publish(deviceId, value.ToString());
         }
 
         #endregion

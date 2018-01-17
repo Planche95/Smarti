@@ -17,7 +17,7 @@ namespace Smarti.Models.SocketsViewModels
 
         [Required]
         [Display(Name = "Device Id")]
-        [RegularExpression(@"^[0-9]{8}$", ErrorMessage = "Device Id have to contain 8 digits!")]
+        [RegularExpression(@"^[0-9]{14}$", ErrorMessage = "Device Id have to contain 14 digits!")]
         public string DeviceId { get; set; }
 
         [Required]

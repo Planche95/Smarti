@@ -166,7 +166,7 @@ namespace Smarti.Controllers
             if (startTime.Subtract(timeTask.TimeStamp).Duration().Minutes == 0)
             {
                 Socket socket = _socketRepository.GetSocketById(timeTask.SocketId);
-                _mqttAppClientSingleton.Publish("sockets", timeTask.Action.ToString());
+                _mqttAppClientSingleton.Publish(socket.DeviceId, timeTask.Action.ToString());
             }
 
             _timeTaskRepository.DeleteTimeTask(timeTask.TimeTaskId);
