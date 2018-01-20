@@ -94,13 +94,13 @@ namespace Smarti.Controllers
             List<double> data = new List<double>();
             for (int j = 0; j < socketsNames.Count(); j++)
             {
-                data.Add(
-                    room.Sockets
+                double sum = room.Sockets
                         .Where(s => s.Name.Equals(socketsNames[j]))
                         .SelectMany(s => s.SocketDatas)
-                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 &&  sd.TimeStamp.CompareTo(to) < 0)
-                        .Sum(sd => sd.Value)
-                    );
+                        .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) < 0)
+                        .Sum(sd => sd.Value);
+
+                data.Add(Math.Round(sum, 2));
             }
 
             PieDataset dataset = new PieDataset()
@@ -124,8 +124,9 @@ namespace Smarti.Controllers
             List<double> data = new List<double>();
             for (int i = 0; i < 7; i++)
             {
-                data.Add(validatedData.Where(sd => (int)sd.TimeStamp.DayOfWeek == i)
-                                      .Sum(sd => sd.Value));
+                double sum = validatedData.Where(sd => (int)sd.TimeStamp.DayOfWeek == i).Sum(sd => sd.Value);
+
+                data.Add(Math.Round(sum, 2));
             }
 
             //Default index 0 is for Sunday
@@ -150,13 +151,13 @@ namespace Smarti.Controllers
             List<double> data = new List<double>();
             for (int i = 0; i < rooms.Count(); i++)
             {
-                data.Add(
-                    rooms.Where(r => r.Name.Equals(rooms[i].Name))
-                    .SelectMany(r => r.Sockets)
-                    .SelectMany(s => s.SocketDatas)
-                    .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) < 0)
-                    .Sum(sd => sd.Value)
-                    );
+                double sum = rooms.Where(r => r.Name.Equals(rooms[i].Name))
+                                    .SelectMany(r => r.Sockets)
+                                    .SelectMany(s => s.SocketDatas)
+                                    .Where(sd => sd.TimeStamp.CompareTo(from) >= 0 && sd.TimeStamp.CompareTo(to) < 0)
+                                    .Sum(sd => sd.Value);
+
+                data.Add(Math.Round(sum, 2));
             }
 
             PieDataset dataset = new PieDataset()
@@ -181,8 +182,9 @@ namespace Smarti.Controllers
             List<double> data = new List<double>();
             for (int i = 0; i < 7; i++)
             {
-                data.Add(validatedData.Where(sd => (int)sd.TimeStamp.DayOfWeek == i)
-                                      .Sum(sd => sd.Value));
+                double sum = validatedData.Where(sd => (int)sd.TimeStamp.DayOfWeek == i).Sum(sd => sd.Value);
+
+                data.Add(Math.Round(sum, 2));
             }
 
             //Default index 0 is for Sunday

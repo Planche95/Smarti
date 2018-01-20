@@ -22,7 +22,7 @@ namespace Smarti.Services
 
             BarDataset dataset = new BarDataset()
             {
-                Label = "Power consumption",
+                Label = "Power consumption (W)",
                 Data = resourceData, 
                 BackgroundColor = new List<string>()
                 {
@@ -56,7 +56,8 @@ namespace Smarti.Services
 
             Options options = new Options()
             {
-                Scales = new Scales()
+                Scales = new Scales(),
+                Tooltips = new ToolTip()
             };
 
             Scales scales = new Scales()
@@ -73,7 +74,18 @@ namespace Smarti.Services
                 }
             };
 
+            ToolTip toolTip = new ToolTip
+            {
+                Enabled = true,
+                Mode = "single",
+                Callbacks = new Callback
+                {
+                    Label = "function(tooltipItems, data) {return tooltipItems.yLabel + ' W';}"
+                }
+            };
+
             options.Scales = scales;
+            options.Tooltips = toolTip;
 
             chart.Options = options;
 
@@ -97,6 +109,24 @@ namespace Smarti.Services
                 dataset
             };
 
+            Options options = new Options()
+            {
+                Tooltips = new ToolTip()
+            };
+
+            ToolTip toolTip = new ToolTip
+            {
+                Enabled = true,
+                Mode = "single",
+                Callbacks = new Callback
+                {
+                    Label = "function(tooltipItem, data) { var indice = tooltipItem.index; return  data.labels[indice] +': '+data.datasets[0].data[indice] + ' W';}"
+                }
+            };
+
+            options.Tooltips = toolTip;
+
+            chart.Options = options;
             chart.Data = data;
 
             return chart;

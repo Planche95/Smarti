@@ -53,6 +53,11 @@ namespace Smarti.Controllers
         {
             Room room = _roomRepository.GetRoomById(id);
 
+            if (room == null)
+            {
+                return new NotFoundResult();
+            }
+
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, room, Operations.Update);
 
@@ -80,6 +85,11 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             Room room = _roomRepository.GetRoomById(id);
+
+            if (room == null)
+            {
+                return new NotFoundResult();
+            }
 
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, room, Operations.Delete);

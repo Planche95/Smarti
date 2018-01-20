@@ -34,6 +34,12 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Index(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
+
+            if (socket == null)
+            {
+                return new NotFoundResult();
+            }
+
             TimeTask timeTask = new TimeTask { Socket = socket };
 
             AuthorizationResult authorizationResult = await _authorizationService
@@ -56,6 +62,12 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Create(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
+
+            if (socket == null)
+            {
+                return new NotFoundResult();
+            }
+
             TimeTask timeTask = new TimeTask { Socket = socket, SocketId = id, TimeStamp = DateTime.Today };
 
             AuthorizationResult authorizationResult = await _authorizationService
@@ -98,6 +110,11 @@ namespace Smarti.Controllers
         {
             TimeTask timeTask = _timeTaskRepository.GetTimeTaskById(id);
 
+            if (timeTask == null)
+            {
+                return new NotFoundResult();
+            }
+
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, timeTask, Operations.Update);
 
@@ -129,6 +146,11 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             TimeTask timeTask = _timeTaskRepository.GetTimeTaskById(id);
+
+            if (timeTask == null)
+            {
+                return new NotFoundResult();
+            }
 
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, timeTask, Operations.Delete);

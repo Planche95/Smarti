@@ -52,11 +52,11 @@
                     dataType: 'json',
                     success: function (response) {
                         console.log("start");
+                        console.log(response);
 
                         $(".btn-toggle").each(function () {
                             var devid = $(this).attr('id');
                             var res = response[devid];
-                            console.log(response);
                             if (res == null) {
                                 $(this).addClass("disabled")
                                         .attr('data-toggle', "")

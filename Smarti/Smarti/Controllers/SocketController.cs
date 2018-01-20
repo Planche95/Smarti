@@ -59,6 +59,12 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Create(int id)
         {
             Room room =_roomRepository.GetRoomById(id);
+
+            if (room == null)
+            {
+                return new NotFoundResult();
+            }
+
             Socket socket = new Socket { Room = room, RoomId = id };
 
             AuthorizationResult authorizationResult = await _authorizationService
@@ -113,6 +119,11 @@ namespace Smarti.Controllers
         {
             Socket socket = _socketRepository.GetSocketById(id);
 
+            if (socket == null)
+            {
+                return new NotFoundResult();
+            }
+
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, socket, Operations.Update);
 
@@ -166,6 +177,11 @@ namespace Smarti.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             Socket socket = _socketRepository.GetSocketById(id);
+
+            if (socket == null)
+            {
+                return new NotFoundResult();
+            }
 
             AuthorizationResult authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, socket, Operations.Delete);
