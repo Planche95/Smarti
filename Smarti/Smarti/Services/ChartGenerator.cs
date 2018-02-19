@@ -22,7 +22,7 @@ namespace Smarti.Services
 
             BarDataset dataset = new BarDataset()
             {
-                Label = "Power consumption (W)",
+                Label = "Electric energy consumption (kWh)",
                 Data = resourceData, 
                 BackgroundColor = new List<string>()
                 {
@@ -80,7 +80,7 @@ namespace Smarti.Services
                 Mode = "single",
                 Callbacks = new Callback
                 {
-                    Label = "function(tooltipItems, data) {return tooltipItems.yLabel + ' W';}"
+                    Label = "function(tooltipItems, data) {return tooltipItems.yLabel + ' kWh';}"
                 }
             };
 
@@ -120,7 +120,7 @@ namespace Smarti.Services
                 Mode = "single",
                 Callbacks = new Callback
                 {
-                    Label = "function(tooltipItem, data) { var indice = tooltipItem.index; return  data.labels[indice] +': '+data.datasets[0].data[indice] + ' W';}"
+                    Label = "function(tooltipItem, data) { var indice = tooltipItem.index; return  data.labels[indice] +': '+data.datasets[0].data[indice] + ' kWh';}"
                 }
             };
 

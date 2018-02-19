@@ -224,7 +224,6 @@ namespace Smarti.Controllers
 
             if (_socketRepository.Sockets.Any())
             {
-                //TODO send this to view
                 string[] topics = _socketRepository.Sockets
                     .Include(s => s.Room)
                     .Where(s => s.Room.UserId.Equals(_userManager.GetUserId(User)))

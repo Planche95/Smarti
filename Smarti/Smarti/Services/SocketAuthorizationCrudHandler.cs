@@ -36,8 +36,6 @@ namespace Smarti.Services
             }
 
             return Task.CompletedTask;
-
-            throw new NotImplementedException();
         }
     }
 }

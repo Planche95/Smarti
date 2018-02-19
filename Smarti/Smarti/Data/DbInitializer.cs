@@ -31,7 +31,7 @@ namespace Smarti.Data
             if (_userManager.Users.Any()) return;
 
             string user = "tom@smarti.com";
-            string password = "Smarti1243";
+            string password = "Smarti1243!";
             _userManager.CreateAsync(new ApplicationUser { UserName = user, Email = user, EmailConfirmed = true }, password).GetAwaiter().GetResult();
 
             string userId =_userManager.FindByEmailAsync(user).GetAwaiter().GetResult().Id;

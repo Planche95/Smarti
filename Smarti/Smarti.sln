@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smarti", "Smarti\Smarti.csproj", "{6397DF78-9937-4E84-AD20-14C27ABDCD2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarti", "Smarti\Smarti.csproj", "{6397DF78-9937-4E84-AD20-14C27ABDCD2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smarti.UnitTests", "Smarti.UnitTests\Smarti.UnitTests.csproj", "{84B6EA12-3CE0-4867-A402-8F48FC3857D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6397DF78-9937-4E84-AD20-14C27ABDCD2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6397DF78-9937-4E84-AD20-14C27ABDCD2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6397DF78-9937-4E84-AD20-14C27ABDCD2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84B6EA12-3CE0-4867-A402-8F48FC3857D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84B6EA12-3CE0-4867-A402-8F48FC3857D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84B6EA12-3CE0-4867-A402-8F48FC3857D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84B6EA12-3CE0-4867-A402-8F48FC3857D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
